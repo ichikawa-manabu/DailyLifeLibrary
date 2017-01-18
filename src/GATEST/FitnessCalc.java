@@ -98,6 +98,28 @@ public class FitnessCalc {
         }
     }
 
+    //結果を書き出す
+    public static void print_percentage(Individual individual, File outfile)  {
+
+        try{
+            PrintWriter output = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outfile, false), "Shift_JIS"));//結合した結果を新しいファイル'out'に保存する
+            int[] recorder = new int[defaultGeneLength];
+            int x = 0;
+            output.write("percentage");
+            for(int i = 0; i<individual.size(); ++i) {
+                x = individual.getGene(i);
+                recorder[x]=recorder[x]+1;
+            }
+            for(int j=0;j<defaultGeneLength;j++){
+                output.write("\n"+(double)(recorder[j]/NO_OF_PARAMETERS));//四捨五入
+                System.out.println("percentage"+j+" is "+(double)(recorder[j]/NO_OF_PARAMETERS));
+            }
+            output.close();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //数字から時間への変換
     public static String change(int a){
         int HH=(int)a/4;
@@ -125,7 +147,8 @@ public class FitnessCalc {
 
         System.out.println();
         System.out.println("Best individual");
-        print_best_unit(FitnessCalc.getBestIndividual(myPop),outfile);
+        //print_best_unit(FitnessCalc.getBestIndividual(myPop),outfile);
+        print_percentage(FitnessCalc.getBestIndividual(myPop),outfile);
 
     }
 
@@ -135,7 +158,8 @@ public class FitnessCalc {
         File performer_percentage = new File(inDir.getPath() + "/④時刻別行為者率（職業別、都市規模別ほか）.xls");
         String Name=Initialization.name(perform_time,sheet_num1);//何タイプの人の結果を記録した　例えば：成人男性、２０代女性どか
         System.out.println("Name"+Name);
-        File  outFile = new File(outDir.getPath() + "/"+Name+"sleep_start_time.csv");
+        //File  outFile = new File(outDir.getPath() + "/"+Name+"sleep_start_time.csv");
+        File  outFile = new File(outDir.getPath() + "/"+Name+"sleep_start_time_percentage.csv");
         if(!outFile.exists()) {
             outFile.createNewFile();
         }
