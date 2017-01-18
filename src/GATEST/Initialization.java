@@ -1,4 +1,4 @@
-package Life_style;
+package GATEST;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -174,7 +174,6 @@ public class Initialization {
     }
 
     ///////////////////////////
-    //test
 
 
 }

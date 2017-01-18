@@ -99,7 +99,6 @@ public class Evaluator {
             for(int i = 0; i<v.getDimension(); ++i) {
                 x = map(v.getData(i));
                 output.write("\n"+change((int)Math.round(x)));//四捨五入
-
                 System.out.println("result"+i+" is "+change((int)Math.round(x)));
 
             }
@@ -125,7 +124,7 @@ public class Evaluator {
     //outfile:出力結果
     public static void ga_calculation(File infile1, int sheet_num1, File infile2, int sheet_num2, File outfile) throws IOException {
 
-        int Sleep_period= Initialization.sleep_period(infile1,sheet_num1);
+         Sleep_period= Initialization.sleep_period(infile1,sheet_num1);
         standard_sleep_time=Initialization.standard_sleep_time(infile2, sheet_num2);
        /* for(int i=0; i<standard_sleep_time.length;i++){
             System.out.println(standard_sleep_time[i]);
@@ -142,7 +141,7 @@ public class Evaluator {
         //   } while(ga.getBestEvaluationValue()>10);
 
 
-        for(int i =0; i<500; ++i)//500回を回す
+        for(int i =0; i<100; ++i)//500回を回す
 
         //for(int i =0; ga.getBestEvaluationValue()>1; ++i)//回す　until評価値は１より小さい
         {
