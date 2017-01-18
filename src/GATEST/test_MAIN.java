@@ -7,7 +7,7 @@ import java.io.File;
  * 使い方: 「dir:国民生活時間調査のフォルダ」 を入力したら、その下のoutのフォルダに出力ファイルcsvが出てきます。
  *    //sheet_num1:②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls"の中調べたいsheetの番号
  *    //sheet_num２:④時刻別行為者率（職業別、都市規模別ほか）.xls"　　
- *    ＃注意：sheet_num1とsheet_num２不一致かも
+ *    ＃注意：sheet_num1とsheet_num２不一致
  *   sheet_num1とsheet_num２可能な組み合わせは45組
  *
  */
@@ -15,7 +15,7 @@ public class test_MAIN {
 
     public static void main(String args[]) throws Exception {
 
-        File dir = new File("/Users/jiao/Desktop/国民生活時間調査");
+        File dir = new File("/Users/jiao/IdeaProjects/life_style/DailyLifeLibrary/data/国民生活時間調査");
         File outDir = new File(dir.getPath() + "/out");
         if(!outDir.exists()) {
             outDir.mkdir();

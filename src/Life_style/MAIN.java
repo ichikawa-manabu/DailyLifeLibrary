@@ -14,7 +14,7 @@ public class MAIN {
 
     public static void main(String args[]) throws Exception {
 
-        File dir = new File("/Users/jiao/Desktop/国民生活時間調査");
+        File dir = new File("/Users/jiao/IdeaProjects/life_style/DailyLifeLibrary/data/国民生活時間調査");
         File outDir = new File(dir.getPath() + "/out");
         if(!outDir.exists()) {
             outDir.mkdir();

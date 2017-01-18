@@ -6,7 +6,7 @@ import java.io.*;
  * Created by jiao on 2017/01/18.
  */
 public class FitnessCalc {
-    //個体数
+    //個体総数
     public static final int POPULATION_SIZE = 50;
     //遺伝子の長さ 今回は10000人と想定する
     static  int NO_OF_PARAMETERS =10000;
@@ -105,14 +105,14 @@ public class FitnessCalc {
             PrintWriter output = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outfile, false), "Shift_JIS"));//結合した結果を新しいファイル'out'に保存する
             int[] recorder = new int[defaultGeneLength];
             int x = 0;
-            output.write("percentage");
+            output.write("time,percentage");
             for(int i = 0; i<individual.size(); ++i) {
                 x = individual.getGene(i);
                 recorder[x]=recorder[x]+1;
             }
             for(int j=0;j<defaultGeneLength;j++){
-                output.write("\n"+(double)recorder[j]/NO_OF_PARAMETERS);//四捨五入
-                System.out.println("percentage"+j+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
+                output.write("\n"+change((int)Math.round(j))+","+(double)recorder[j]/NO_OF_PARAMETERS);//四捨五入
+                System.out.println("percentage"+change((int)Math.round(j))+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
             }
             output.close();
         }catch (IOException e) {
