@@ -111,8 +111,8 @@ public class FitnessCalc {
                 recorder[x]=recorder[x]+1;
             }
             for(int j=0;j<defaultGeneLength;j++){
-                output.write("\n"+(double)(recorder[j]/NO_OF_PARAMETERS));//四捨五入
-                System.out.println("percentage"+j+" is "+(double)(recorder[j]/NO_OF_PARAMETERS));
+                output.write("\n"+(double)recorder[j]/NO_OF_PARAMETERS);//四捨五入
+                System.out.println("percentage"+j+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
             }
             output.close();
         }catch (IOException e) {
