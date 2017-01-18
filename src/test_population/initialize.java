@@ -1,4 +1,4 @@
-package Life_style;
+package test_population;
 
 import java.io.*;
 import java.text.ParseException;
@@ -12,7 +12,7 @@ import java.util.TimeZone;
  * ファイルからのデータを加工する
  */
 public class initialize {
-    //個体数
+    //扱うパラメータの数 今回は10000人と想定する
     public static int NO_OF_PARAMETERS = 10000;
     //個体の長さ
     public static int defaultGeneLength = 96;//24時間

@@ -1,4 +1,4 @@
-package Life_style;
+package test_population;
 
 
 import ga.core.IIndividual;
@@ -22,7 +22,7 @@ public class evaluate {
     private static File file = new File("/Users/jiao/Desktop/国民生活時間調査/test_out.csv");
 
     //個体数
-    public static final int POPULATION_SIZE = 10000;
+    public static final int POPULATION_SIZE = 30;
     //個体の長さ
     public static final int defaultGeneLength = 96;//24時間
     //扱うパラメータの数 今回は10000人と想定する
@@ -128,19 +128,25 @@ public class evaluate {
     public static void main(String args[]){
     //public static void calculation(){
 
-        standard_sleep_time=initialize.standard_sleep_time(file_in);
+        standard_sleep_time= initialize.standard_sleep_time(file_in);
        /* for(int i=0;i<standard_sleep_time.length;i++){
             System.out.println(standard_sleep_time[i]);
         }*/
 
 //GA
-            TUndxMgg ga = new TUndxMgg(true,NO_OF_PARAMETERS,POPULATION_SIZE,NO_OF_CROSSOVERS);
-            List<TRealNumberIndividual> initialPopulation = ga.getInitialPopulation();
+        TUndxMgg ga=  new TUndxMgg(true,NO_OF_PARAMETERS,POPULATION_SIZE,NO_OF_CROSSOVERS);
+       //   do{
+            ga = new TUndxMgg(true,NO_OF_PARAMETERS,POPULATION_SIZE,NO_OF_CROSSOVERS);
+
+               List<TRealNumberIndividual> initialPopulation = ga.getInitialPopulation();
             evaluatePopulation(initialPopulation);
+        System.out.println(  ga.getBestEvaluationValue());
+         //   } while(ga.getBestEvaluationValue()>10);
 
-           // for(int i =0; i<500; ++i)//500回を回す
 
-         for(int i =0; ga.getBestEvaluationValue()>1; ++i)//回す　until評価値は１より小さい
+            for(int i =0; i<100; ++i)//500回を回す
+
+         //for(int i =0; ga.getBestEvaluationValue()>1; ++i)//回す　until評価値は１より小さい
             {
                 List<TRealNumberIndividual> family = ga.selectParentsAndMakeKids();
                 evaluatePopulation(family);
