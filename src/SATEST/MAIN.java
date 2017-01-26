@@ -18,7 +18,7 @@ public class MAIN {
         //女20代を例としてテスト
         int sheet_num1=22;//女20代
         int sheet_num2=34;//女20代平日
-        new FitnessCalc(dir,outDir,sheet_num1,sheet_num2);
+        new Evaluation(dir,outDir,sheet_num1,sheet_num2);
         */
 
 
