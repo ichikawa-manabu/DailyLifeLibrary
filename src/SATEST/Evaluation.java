@@ -87,7 +87,7 @@ public class Evaluation {
             }
             for(int j=0;j<defaultGeneLength;j++){
                 output.write("\n"+change((int)Math.round(j))+","+(double)recorder[j]/NO_OF_PARAMETERS);//四捨五入
-                System.out.println("percentage"+change((int)Math.round(j))+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
+                //System.out.println("percentage"+change((int)Math.round(j))+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
             }
             output.close();
         }catch (IOException e) {
@@ -137,7 +137,7 @@ public class Evaluation {
             new_seed = revolution.revolution_Individual(best_seed);
             best_seed = compare(best_seed, new_seed);
             fitness = getFitness(best_seed);
-            System.out.println(" fitness : " + i +"is" + fitness);
+            //System.out.println(" fitness : " + i +"is" + fitness);
         }
 
             print_best_unit(best_seed,outfile1);
