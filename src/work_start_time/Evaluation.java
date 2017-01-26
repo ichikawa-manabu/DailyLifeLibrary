@@ -1,4 +1,5 @@
-package SATEST;
+package work_start_time;
+
 
 import java.io.*;
 
@@ -152,8 +153,8 @@ public class Evaluation {
         File performer_percentage = new File(inDir.getPath() + "/④時刻別行為者率（職業別、都市規模別ほか）.xls");
         String Name=Initialization.name(perform_time,sheet_num1);//何タイプの人の結果を記録した　例えば：成人男性、２０代女性どか
         System.out.println("Name"+Name);
-        File  outFile1 = new File(outDir.getPath() + "/"+Name+"sleep_start_time.csv");
-        File  outFile2 = new File(outDir.getPath() + "/"+Name+"sleep_start_time_percentage.csv");
+        File  outFile1 = new File(outDir.getPath() + "/"+Name+"work_start_time.csv");
+        File  outFile2 = new File(outDir.getPath() + "/"+Name+"work_start_time_percentage.csv");
         if(!outFile1.exists()) {
             outFile1.createNewFile();
         }

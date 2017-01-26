@@ -1,6 +1,5 @@
-package GATEST;
+package work_start_time;
 
-import java.io.IOException;
 
 /**
  * Created by jiao on 2017/01/18.
@@ -40,14 +39,22 @@ public class Individual {
     //
 
     //22:00から4:00まで、寝る人が多いため、その間の数値を初期値として設定する
-    public void generateIndividual() {
-        int[] possible_time={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,89,90,91,92,93,94,95}; //可能な時間22:00から4：00
+    public static int[] generateIndividual() {
+        int[] genes = new int[NO_OF_PARAMETERS];
+        //int[] possible_time={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,89,90,91,92,93,94,95}; //可能な時間22:00から4：00
+        int[] possible_time=new int[32];
+        for(int i=24;i<56;i++){
+            possible_time[i-24]=i;
+        }
+
+
         int b;
-        for (int i = 0; i < size(); i++) {
+        for (int i = 0; i < NO_OF_PARAMETERS; i++) {
             b=(int)(Math.random()*possible_time.length);
             int gene = possible_time[b];
             genes[i] = gene;
         }
+        return genes;
     }
 
     ////////////////////////////
@@ -61,6 +68,7 @@ public class Individual {
     public int getGene(int index) {
         return genes[index];
     }
+
     public void setGene(int index, int value) {
         genes[index] = value;
         fitness = 0;
@@ -73,13 +81,13 @@ public class Individual {
         return genes.length;
     }
 
-    //evaluatorの計算値
+    /*//evaluatorの計算値
     public double getFitness() throws IOException {
         if (fitness == 0) {
             fitness = FitnessCalc.getFitness(this);
         }
         return fitness;
-    }
+    }*/
 
     @Override
     public String toString() {

@@ -9,7 +9,7 @@ public class FitnessCalc {
     //個体総数
     public static final int POPULATION_SIZE = 50;
     //遺伝子の長さ 今回は10000人と想定する
-    static  int NO_OF_PARAMETERS =10000;
+    static  int NO_OF_PARAMETERS =100000;
     //個体から生成された個体の長さ
     public static final int defaultGeneLength = 96;//24時間
     //睡眠時間
@@ -89,7 +89,7 @@ public class FitnessCalc {
                 x = individual.getGene(i);
                 output.write("\n"+change((int)Math.round(x)));//四捨五入
 
-                System.out.println("result"+i+" is "+change((int)Math.round(x)));
+              //  System.out.println("result"+i+" is "+change((int)Math.round(x)));
 
             }
             output.close();
@@ -103,6 +103,9 @@ public class FitnessCalc {
 
         try{
             PrintWriter output = new PrintWriter(new OutputStreamWriter(new FileOutputStream(outfile, false), "Shift_JIS"));//結合した結果を新しいファイル'out'に保存する
+
+            System.out.println("Evaluation value: " + individual.getFitness());
+
             int[] recorder = new int[defaultGeneLength];
             int x = 0;
             output.write("time,percentage");
@@ -112,7 +115,7 @@ public class FitnessCalc {
             }
             for(int j=0;j<defaultGeneLength;j++){
                 output.write("\n"+change((int)Math.round(j))+","+(double)recorder[j]/NO_OF_PARAMETERS);//四捨五入
-                System.out.println("percentage"+change((int)Math.round(j))+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
+              //  System.out.println("percentage"+change((int)Math.round(j))+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
             }
             output.close();
         }catch (IOException e) {
@@ -140,13 +143,13 @@ public class FitnessCalc {
         while(generationCount<times){//500回
        // while (FitnessCalc.getBestIndividual(myPop).getFitness() > 1) { //fitnessは1以下ならbest individual
             generationCount++;
-            System.out.println("Generation: " + generationCount + " Fittest: "
-                    + FitnessCalc.getBestIndividual(myPop).getFitness());
+          //  System.out.println("Generation: " + generationCount + " Fittest: "
+            //        + FitnessCalc.getBestIndividual(myPop).getFitness());
             myPop = Algorithm.evolvePopulation(myPop);
         }
 
-        System.out.println();
-        System.out.println("Best individual");
+       // System.out.println();
+       // System.out.println("Best individual");
         //print_best_unit(FitnessCalc.getBestIndividual(myPop),outfile);
         print_percentage(FitnessCalc.getBestIndividual(myPop),outfile);
 
