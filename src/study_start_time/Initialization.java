@@ -1,4 +1,4 @@
-package work_start_time;
+package study_start_time;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -42,12 +42,12 @@ public class Initialization {
             int cellEnd = row.getLastCellNum();
             Cell cell_a = row.getCell(0);        //i行第1列
             cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("通　　　　　 　勤")){
+            if(cellValue.equals("通　　　　 　　学")){
                 Cell cell_b = row.getCell(3);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
                 // cellValue = cell_b.getStringCellValue().trim();
                 double cellValue2 = cell_b.getNumericCellValue();//dateの形
                 time=(int)(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15));
-                System.out.println( "average_work_time:"+ time+"*15min;");
+                System.out.println( "average_study_time:"+ time+"*15min;");
                 break;
             }
         }
@@ -81,7 +81,7 @@ public class Initialization {
             if(cell.getCellType()== HSSFCell.CELL_TYPE_STRING){
                 cellValue = cell.getStringCellValue().trim();
             }
-            if(cellValue.equals("通　　　　　 　勤")){
+            if(cellValue.equals("通　　　　 　　学")){
                 for (int k = 2; k < 2+defaultGeneLength; k++) {
                     Cell cell_b = row.getCell(k);
                     time[k - 2] = (int) (cell_b.getNumericCellValue() * NO_OF_PARAMETERS / 100);//
