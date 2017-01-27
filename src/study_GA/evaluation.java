@@ -184,7 +184,7 @@ public class evaluation {
 
             }
 ////////////////////////
-            back_time = Initialization.end_Population(new_move_time, best_move_time);
+            back_time = Initialization.end_Population(new_end_time, best_move_time);
 
             best_back_time = compare(best_back_time, back_time, T);
             if( best_back_time==back_time){

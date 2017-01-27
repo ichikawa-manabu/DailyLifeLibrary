@@ -54,7 +54,7 @@ public class revolution {
             //if (Math.random() <= 0.5) {
                 value = original[i] + var;
             if(value<=0){
-                value=value+defaultGeneLength;
+                value=(value+defaultGeneLength)% defaultGeneLength;
             }
 
             //} else {
@@ -64,7 +64,7 @@ public class revolution {
 
                // }
             newIndividual[i]=value;
-            if(value==96) {
+            if(value>96) {
                 System.out.println("new_value" + i + "is" + value);
             }
 
