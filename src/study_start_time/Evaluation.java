@@ -149,7 +149,7 @@ public class Evaluation {
     }
 
 
-    Evaluation(File inDir, File outDir, int sheet_num1, int sheet_num2 ) throws Exception {
+    public Evaluation(File inDir, File outDir, int sheet_num1, int sheet_num2) throws Exception {
         File  perform_time = new File(inDir.getPath() + "/②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls");
         File performer_percentage = new File(inDir.getPath() + "/④時刻別行為者率（職業別、都市規模別ほか）.xls");
         String Name=Initialization.name(perform_time,sheet_num1);//何タイプの人の結果を記録した　例えば：成人男性、２０代女性どか

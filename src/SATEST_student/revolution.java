@@ -1,4 +1,4 @@
-package study_GA;
+package SATEST_student;
 
 
 import java.util.Random;
@@ -42,31 +42,22 @@ public class revolution {
       return newIndividual;
     }
 
-    public static int[] revolution_Individual2(int[] original,double deviation) {
+    public static int[] revolution_Individual2(int[] original) {
         int newIndividual[]= new int[NO_OF_PARAMETERS];
 
         for(int i=0;i<original.length;i++) {
             int value = 0;
             Random random = new Random();
-            int var=(int)Math.round(deviation * random.nextGaussian()) ;
+            int var=(int)Math.round(random.nextGaussian()) ;
             //  System.out.println("var"+i+"is"+var);
 
             //if (Math.random() <= 0.5) {
-                value = original[i] + var;
+                value = (original[i] + var)% defaultGeneLength;
             if(value<=0){
                 value=(value+defaultGeneLength)% defaultGeneLength;
             }
 
-            //} else {
-              //  value = (original[i] - var) % defaultGeneLength;
-                //if(value<0){//移動時間を０にする
-                  //  value=0;
-
-               // }
             newIndividual[i]=value;
-            if(value>96) {
-                System.out.println("new_value" + i + "is" + value);
-            }
 
         }
 

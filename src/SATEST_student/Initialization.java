@@ -1,4 +1,4 @@
-package study_SA;
+package SATEST_student;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -22,50 +22,13 @@ public class Initialization {
     public static final int NO_OF_PARAMETERS =1000;
 
 
-    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
-    //検索したいsheet_numberを入力
-    // 返し値:国民生活時間調査から抽出した学校start期間
-    public static int move_period(File file, int sheet_number) throws IOException {
 
-        POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
-        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheet_number);
+    public static int move_period(int average, int deviation) throws IOException {
 
-        double average = 0;
-        int time=0;
-        double deviation=0;
-        int rowstart = hssfSheet.getFirstRowNum();
-        int rowEnd = hssfSheet.getLastRowNum();
-        String cellValue = "";
-        for (int i = rowstart; i <= rowEnd; i++) {
-            //for (int i = rowstart; !cellValue.equals("睡　　　　　　 眠"); i++) {//行を抽出する
-            HSSFRow row = hssfSheet.getRow(i);//第i行
-            if (null == row) continue;
-            int cellStart = row.getFirstCellNum();
-            int cellEnd = row.getLastCellNum();
-            Cell cell_a = row.getCell(0);        //i行第1列
-            cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("通　　　　 　　学")){
-                Cell cell_b = row.getCell(3);        //通学平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
-                // cellValue = cell_b.getStringCellValue().trim();
-                double cellValue2 = cell_b.getNumericCellValue();//dateの形
-               // average=(int)Math.ceil((Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15))/2);
-                average=(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15))/2;//往復時間/2
-
-                Cell cell_c = row.getCell(5);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
-                double cellValue3 = cell_c.getNumericCellValue();//dateの形
-                deviation=(Math.floor(cellValue3*24)*4+Math.round((cellValue3*24-Math.floor(cellValue3*24))*60/15))/2;
+                int time;
                 Random random = new Random();
                  time=(int)Math.round(deviation * random.nextGaussian() + average);
-               /* if(time<0){//負の値を除く
-                    time=0;
-                }*/
-
                // System.out.println( average+"  "+ deviation+"MOVE period:"+ time+"*15min;");
-                break;
-            }
-        }
-
         return time;
 
     }
@@ -74,7 +37,7 @@ public class Initialization {
     //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
     // 返し値:平均通学時間
-    public static int average(File file, int sheet_number) throws IOException {
+    public static int move_average(File file, int sheet_number) throws IOException {
 
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
@@ -111,7 +74,7 @@ public class Initialization {
     //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
     // 返し値:通学時間の標準偏差
-    public static int deviation(File file, int sheet_number) throws IOException {
+    public static int move_deviation(File file, int sheet_number) throws IOException {
 
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
@@ -147,22 +110,23 @@ public class Initialization {
 
     public static int[] move_period_set(File file, int sheet_number) throws IOException {
         int[] move_period_set = new int[NO_OF_PARAMETERS];
+        int average=move_average(file, sheet_number);
+        int deviation=move_deviation(file, sheet_number);
         for(int i=0; i<NO_OF_PARAMETERS;i++){
-            move_period_set[i] = move_period(file, sheet_number);
+            move_period_set[i] = move_period(average, deviation);
         }
         return move_period_set;
     }
 
 
     // 最初個体を作る
-    public static byte[] generateStudent(int start_time,int move_time) {
+    public static byte[] generateStartseed(int start_time,int move_time) {
         //個体が持つ行列
-        //個体が持つ睡眠時間 sleep_time
+        //個体が持つ移動時間move_time
         //例：７時間15分=29
 
 
         byte[] genes = new byte[defaultGeneLength];
-        //int start_time= (int)(Math.random()*defaultGeneLength);
         int i=0;
         start_time=(start_time-move_time)%defaultGeneLength;
        if(move_time==0) {//移動時間は１５MIN単位で取ってるので　15分以内なら　今の時間を開始時間にする　移動時間は０
@@ -171,7 +135,7 @@ public class Initialization {
 
             while(i<Math.abs(move_time)){//
             genes[start_time-1] = 1;
-            start_time++;
+            start_time++;//
             i++;
         }
         return genes;
@@ -180,11 +144,11 @@ public class Initialization {
 
     //全ての個体が持つ行列の足し算、種を作る
 
-    public static int[] Student_Population(int[] move_time_set,int start_time) {
+    public static int[] generateStartPopulation(int[] move_time_set,int start_time) {
         byte[] genes = new byte[defaultGeneLength];
         int[] Population = new int[defaultGeneLength];
         for(int i=0;i<NO_OF_PARAMETERS;i++) {
-            genes = generateStudent(start_time, move_time_set[i]);
+            genes = generateStartseed(start_time, move_time_set[i]);
             //System.out.println("start_time " +start_time+"and"+i);
 
             for(int j=0;j<defaultGeneLength;j++) {
@@ -222,7 +186,7 @@ public class Initialization {
                 cellValue = cell.getStringCellValue().trim();
             }
             if(cellValue.equals("通　　　　 　　学")){
-                for (int k = 2; k < 2+(int)(defaultGeneLength/2); k++) {
+                for (int k = 2; k < 2+(int)(defaultGeneLength); k++) {
                     Cell cell_b = row.getCell(k);
                     time[k - 2] = (int) (cell_b.getNumericCellValue() * NO_OF_PARAMETERS / 100);//
                    // System.out.println(time[k-2]);
@@ -270,16 +234,17 @@ public class Initialization {
     }
 
 
-
-    public static int study_period(File file, int sheet_number) throws IOException {
+    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
+    //検索したいsheet_numberを入力
+    // 返し値:学校にいる時間
+    public static int study_average(File file, int sheet_number) throws IOException {
 
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
         HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheet_number);
 
-        double average = 0;
-        int time=0;
-        double deviation=0;
+        int average = 0;
+
         int rowstart = hssfSheet.getFirstRowNum();
         int rowEnd = hssfSheet.getLastRowNum();
         String cellValue = "";
@@ -296,32 +261,109 @@ public class Initialization {
                 // cellValue = cell_b.getStringCellValue().trim();
                 double cellValue2 = cell_b.getNumericCellValue();//dateの形
                 // average=(int)Math.ceil((Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15))/2);
-                average=(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15));//往復時間/2
+                average=(int)((Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15)));//往復時間/2
 
-                Cell cell_c = row.getCell(5);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
-                double cellValue3 = cell_c.getNumericCellValue();//dateの形
-                deviation=(Math.floor(cellValue3*24)*4+Math.round((cellValue3*24-Math.floor(cellValue3*24))*60/15));
-                Random random = new Random();
-                time=(int)Math.round(deviation * random.nextGaussian() + average);
-               /* if(time<0){//負の値を除く
-                    time=0;
-                }*/
-
-                // System.out.println( average+"  "+ deviation+"MOVE period:"+ time+"*15min;");
                 break;
             }
         }
 
-        return time;
+        return average;
 
     }
 
+    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
+    //検索したいsheet_numberを入力
+    // 返し値:学内にいる時間の標準偏差
+    public static int study_deviation(File file, int sheet_number) throws IOException {
+
+        POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
+        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheet_number);
+
+        int deviation=0;
+        int rowstart = hssfSheet.getFirstRowNum();
+        int rowEnd = hssfSheet.getLastRowNum();
+        String cellValue = "";
+        for (int i = rowstart; i <= rowEnd; i++) {
+            //for (int i = rowstart; !cellValue.equals("睡　　　　　　 眠"); i++) {//行を抽出する
+            HSSFRow row = hssfSheet.getRow(i);//第i行
+            if (null == row) continue;
+            int cellStart = row.getFirstCellNum();
+            int cellEnd = row.getLastCellNum();
+            Cell cell_a = row.getCell(0);        //i行第1列
+            cellValue = cell_a.getStringCellValue().trim();
+            if(cellValue.equals("授業・学内の活動")){
+
+                Cell cell_c = row.getCell(5);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
+                double cellValue3 = cell_c.getNumericCellValue();//dateの形
+                deviation=(int)((Math.floor(cellValue3*24)*4+Math.round((cellValue3*24-Math.floor(cellValue3*24))*60/15)));
+
+                break;
+            }
+        }
+        return deviation;
+    }
 
 
+    public static int[] study_period_set(File file, int sheet_number) throws IOException {
+        int[] study_period_set = new int[NO_OF_PARAMETERS];
+        int average=study_average(file, sheet_number);
+        int deviation=study_deviation(file, sheet_number);
+        for(int i=0; i<NO_OF_PARAMETERS;i++){
+
+            study_period_set[i] = move_period(average, deviation);//共有できるmethod
+        }
+        return study_period_set;
+    }
+
+    public static int[] study_end_time(File file, int sheet_number, int start_time) throws IOException {
+        int[] study_end_time_set = study_period_set(file, sheet_number);
+        for(int i=0; i<NO_OF_PARAMETERS;i++){
+            study_end_time_set[i]=(study_end_time_set[i]+start_time)%defaultGeneLength;
+        }
+        return study_end_time_set;
+    }
+
+    ///////////////////////////
+
+    // end個体を作る
+    public static byte[] generateEndseed(int end_time,int move_time) {
+        //個体が持つ行列
+        //例：７時間15分=29
 
 
+        byte[] genes = new byte[defaultGeneLength];
+        int i=0;
+        //start_time=(end_time-move_time)%defaultGeneLength;
+        if(move_time==0) {//移動時間は１５MIN単位で取ってるので　15分以内なら　今の時間を開始時間にする　移動時間は０
+            genes[end_time%defaultGeneLength] = 1;
+        }
 
-        ///////////////////////////
+        while(i<Math.abs(move_time)&&end_time<defaultGeneLength){//
 
+            genes[end_time] = 1;//////////
+            end_time++;//
+            i++;
+        }
+        return genes;
+    }
+
+
+    //全ての個体が持つ行列の足し算、種を作る
+
+    public static int[] generateEndPopulation(int[] end_time_set,int[] move_time_set) {
+        byte[] genes = new byte[defaultGeneLength];
+        int[] Population = new int[defaultGeneLength];
+        for(int i=0;i<NO_OF_PARAMETERS;i++) {
+            genes = generateEndseed(end_time_set[i], move_time_set[i]);
+            //System.out.println("start_time " +start_time+"and"+i);
+
+            for(int j=0;j<defaultGeneLength;j++) {
+                Population[j] += genes[j];
+            }
+
+        }
+        return Population;
+    }
 
 }
