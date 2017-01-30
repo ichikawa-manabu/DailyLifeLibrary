@@ -1,4 +1,4 @@
-package SATEST_student;
+package SATEST_worker;
 
 
 import java.util.Random;
@@ -17,7 +17,7 @@ public class revolution {
 
 //move_timeとstudy＿periodを進化させる
     //original[NO_OF_PARAMETERS]
-    public static int[] revolution_Individual(int[] original,double deviation) {
+    public static int[] revolution_Individual(int[] original,double deviation) {//時間revolution
         int newIndividual[]= new int[NO_OF_PARAMETERS];
 
         for(int i=0;i<original.length;i++) {
@@ -43,7 +43,7 @@ public class revolution {
     }
 
     public static int[] revolution_Individual2(int[] original) {
-        int newIndividual[]= new int[NO_OF_PARAMETERS];
+        int newIndividual[]= new int[NO_OF_PARAMETERS];//start時刻revolution
 
         for(int i=0;i<original.length;i++) {
             int value = 0;
@@ -63,4 +63,6 @@ public class revolution {
 
         return newIndividual;
     }
+
+
     }

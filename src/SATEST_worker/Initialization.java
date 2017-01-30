@@ -1,4 +1,4 @@
-package SATEST_student;
+package SATEST_worker;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -56,7 +56,7 @@ public class Initialization {
             int cellEnd = row.getLastCellNum();
             Cell cell_a = row.getCell(0);        //i行第1列
             cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("通　　　　 　　学")){
+            if(cellValue.equals("通　　　　　 　勤")){
                 Cell cell_b = row.getCell(3);        //通学平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
                 // cellValue = cell_b.getStringCellValue().trim();
                 double cellValue2 = cell_b.getNumericCellValue();//dateの形
@@ -92,7 +92,7 @@ public class Initialization {
             int cellEnd = row.getLastCellNum();
             Cell cell_a = row.getCell(0);        //i行第1列
             cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("通　　　　 　　学")){
+            if(cellValue.equals("通　　　　　 　勤")){
 
                 Cell cell_c = row.getCell(5);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
                 double cellValue3 = cell_c.getNumericCellValue();//dateの形
@@ -128,28 +128,31 @@ public class Initialization {
 
         byte[] genes = new byte[defaultGeneLength];
         int i=0;
-        start_time=(start_time-move_time)%defaultGeneLength;
+        start_time=(start_time-move_time+defaultGeneLength)%defaultGeneLength;
        if(move_time==0) {//移動時間は１５MIN単位で取ってるので　15分以内なら　今の時間を開始時間にする　移動時間は０
-            genes[start_time-1] = 1;
+            genes[start_time] = 1;
         }
 
-            while(i<Math.abs(move_time)){//
-            genes[start_time-1] = 1;
-            start_time++;//
-            i++;
-        }
+        else {
+           while (i < Math.abs(move_time)) {//
+               genes[start_time] = 1;
+                   start_time=(start_time+1)%defaultGeneLength;//
+
+               i++;
+           }
+       }
         return genes;
     }
 
 
     //全ての個体が持つ行列の足し算、種を作る
 
-    public static int[] generateStartPopulation(int[] move_time_set,int start_time) {
+    public static int[] generateStartPopulation(int[] move_time_set,int start_time[]) {
         byte[] genes = new byte[defaultGeneLength];
         int[] Population = new int[defaultGeneLength];
         for(int i=0;i<NO_OF_PARAMETERS;i++) {
-            genes = generateStartseed(start_time, move_time_set[i]);
-            //System.out.println("start_time " +start_time+"and"+i);
+            genes = generateStartseed(start_time[i], move_time_set[i]);
+            //System.out.println("start_time " +start_time[i]+"and"+i);
 
             for(int j=0;j<defaultGeneLength;j++) {
                 Population[j] += genes[j];
@@ -185,7 +188,7 @@ public class Initialization {
             if(cell.getCellType()== HSSFCell.CELL_TYPE_STRING){
                 cellValue = cell.getStringCellValue().trim();
             }
-            if(cellValue.equals("通　　　　 　　学")){
+            if(cellValue.equals("通　　　　　 　勤")){
                 for (int k = 2; k < 2+(int)(defaultGeneLength); k++) {
                     Cell cell_b = row.getCell(k);
                     time[k - 2] = (int) (cell_b.getNumericCellValue() * NO_OF_PARAMETERS / 100);//
@@ -256,7 +259,7 @@ public class Initialization {
             int cellEnd = row.getLastCellNum();
             Cell cell_a = row.getCell(0);        //i行第1列
             cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("授業・学内の活動")){
+            if(cellValue.equals("仕　　　　　　事")){
                 Cell cell_b = row.getCell(3);        //通学平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
                 // cellValue = cell_b.getStringCellValue().trim();
                 double cellValue2 = cell_b.getNumericCellValue();//dateの形
@@ -292,7 +295,7 @@ public class Initialization {
             int cellEnd = row.getLastCellNum();
             Cell cell_a = row.getCell(0);        //i行第1列
             cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("授業・学内の活動")){
+            if(cellValue.equals("仕　　　　　　事")){
 
                 Cell cell_c = row.getCell(5);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
                 double cellValue3 = cell_c.getNumericCellValue();//dateの形
@@ -316,10 +319,10 @@ public class Initialization {
         return study_period_set;
     }
 
-    public static int[] study_end_time(File file, int sheet_number, int start_time) throws IOException {
+    public static int[] study_end_time(File file, int sheet_number, int start_time[]) throws IOException {
         int[] study_end_time_set = study_period_set(file, sheet_number);
         for(int i=0; i<NO_OF_PARAMETERS;i++){
-            study_end_time_set[i]=(study_end_time_set[i]+start_time)%defaultGeneLength;
+            study_end_time_set[i]=(study_end_time_set[i]+start_time[i])%defaultGeneLength;
         }
         return study_end_time_set;
     }
@@ -336,13 +339,13 @@ public class Initialization {
         int i=0;
         //start_time=(end_time-move_time)%defaultGeneLength;
         if(move_time==0) {//移動時間は１５MIN単位で取ってるので　15分以内なら　今の時間を開始時間にする　移動時間は０
-            genes[end_time%defaultGeneLength] = 1;
+            genes[(end_time+defaultGeneLength)%defaultGeneLength] = 1;
         }
 
         while(i<Math.abs(move_time)&&end_time<defaultGeneLength){//
 
-            genes[end_time] = 1;//////////
-            end_time++;//
+            genes[(end_time+defaultGeneLength)%defaultGeneLength] = 1;//////////
+            end_time=(end_time+1)%defaultGeneLength;//
             i++;
         }
         return genes;

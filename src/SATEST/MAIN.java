@@ -10,7 +10,7 @@ public class MAIN {
 
 
         File dir = new File("/Users/jiao.xue/Desktop/国民生活時間調査");
-        File outDir = new File(dir.getPath() + "/out_sa2");
+        File outDir = new File(dir.getPath() + "/out_sleep_time");
         if(!outDir.exists()) {
             outDir.mkdir();
         }
