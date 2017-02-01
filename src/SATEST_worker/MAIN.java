@@ -11,7 +11,7 @@ public class MAIN {
 
 
         File dir = new File("/Users/jiao/Desktop/国民生活時間調査");
-        File outDir = new File(dir.getPath() + "/out_sa_work_time_newest");
+        File outDir = new File(dir.getPath() + "/out_sa_work_time");
         if(!outDir.exists()) {
             outDir.mkdir();
         }
