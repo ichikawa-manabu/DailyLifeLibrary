@@ -1,4 +1,4 @@
-package SATEST_worker;
+package SATEST_worker2;
 
 
 import java.io.*;
@@ -14,7 +14,7 @@ public class Evaluation {
     public static final int NO_OF_PARAMETERS =100000;
 
     //回す回数
-    public static int times=1000 ;
+    public static int times=20000 ;
 
     //答え
     static  int[] solution = new int[defaultGeneLength];
@@ -67,7 +67,7 @@ public class Evaluation {
             return individual2;
         }
         else {
-            if(Math.random()> Math.exp(-comparation / T)){
+            if(Math.random()> Math.exp(-comparation /T)){
                 return individual2;
             }
         }
@@ -191,6 +191,9 @@ public class Evaluation {
         }
     }
 
+
+
+
     //public static void main(String args[]) throws Exception {
         public static void sa_calculation(File infile1, int sheet_num1, File infile2, int sheet_num2, File out, File out2, File out3, File out4, File out5, File out6) throws Exception {
        // File infile1 = new File("/Users/jiao/Desktop/国民生活時間調査/②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls");
@@ -203,131 +206,98 @@ public class Evaluation {
         //int sheet_num2 = 96;
         for(int i=0;i<start_time.length;i++) {
             Random random = new Random();
-           // int var=(int)(Math.abs(Math.round(random.nextGaussian()))*36);
+          //start_time[i]=(int)(Math.abs(random.nextGaussian()*36+36));
+           // start_time[i] = (int)Math.random()*96;//一様乱数
+            //start_time[i] = 36;
             if(Math.random()>0.98){
-                start_time[i] = (int)(Math.abs(random.nextGaussian()*10+68));
-                //start_time[i] = 68;
+                start_time[i] = (int)(Math.abs(random.nextGaussian()*5+68));
+             //   start_time[i] = 68;
             }
-            else                 start_time[i] = (int)(Math.abs(random.nextGaussian()*10+36));
-           // start_time[i] = (int)Math.random()*96;一様乱数
-           // start_time[i] = 36;
+            else start_time[i] = (int)(Math.abs(random.nextGaussian()*5+36));
+            //else start_time[i] = 36;
+
         }//最初通勤は9から
 
 
-        int T = NO_OF_PARAMETERS;
-        double fitness;
+        double T = defaultGeneLength*10;
+        double fitness=10000;
 
-        int[] BestPopulation = new int[defaultGeneLength];
-        int[] Population = new int[defaultGeneLength];
-
-
-        //初期値の生成
-        int[] move_time_set  = new int[NO_OF_PARAMETERS];
-
-        move_time_set=Initialization.move_period_set(infile1, sheet_num1);
-        int deviation =Initialization.move_deviation(infile1, sheet_num1);
-        //////
-        int average=Initialization.move_average(infile1, sheet_num1);
-        //System.out.println("average"+average+"  deviation"+deviation);
-
-        solution = Initialization.standard_study_time(infile2, sheet_num2);
-            solution2 = Initialization.standard_work_time(infile2, sheet_num2);///
-        for(int i=(int)solution.length/2;i<solution.length;i++){
-            solution[i]=0;
-        }
-
-        int[] new_move_time=new int[NO_OF_PARAMETERS];
-        int[] new_start_time  = new int[NO_OF_PARAMETERS];
-        int[] best_move_time=move_time_set;
-        int[] best_start_time=start_time;
-
-        for(int i=0;i<times;i++) {
-            BestPopulation = Initialization.generateStartPopulation(best_move_time, best_start_time);
-           new_move_time = revolution.revolution_Individual(best_move_time,deviation);
-            new_start_time = revolution.revolution_Individual2(best_start_time);
-
-            Population = Initialization.generateStartPopulation(new_move_time, new_start_time);
-            //System.out.println(" best : " + getFitness(BestPopulation)+ "new  " + getFitness(Population));
-
-            BestPopulation = compare(BestPopulation, Population, T);
-
-            if( BestPopulation==Population){
-                best_move_time=new_move_time;
-                best_start_time=new_start_time;
-            }
-            fitness = getFitness(BestPopulation);
-          //  System.out.println(" fitness : " + i + "is" + fitness);
-        }
-
-        print_percentage(best_move_time,out, best_start_time);
-            print_best_unit(best_move_time,out4,best_start_time);
-
-        /*for(int i=0;i<BestPopulation.length;i++){
-            System.out.println(BestPopulation[i]);
-
-        }*/
-        ////////////////////////////////////////
-        //初期値の生成
-        int[] end_time_set  = new int[NO_OF_PARAMETERS];
-        end_time_set=Initialization.study_end_time(infile1, sheet_num1,best_start_time);//帰り時間とstudy＿period
-        //int deviation2 =Initialization.study_deviation(infile1, sheet_num1);//学内いる時間のdeviation
-        solution = Initialization.standard_study_time(infile2, sheet_num2);
-        for(int i=0;i<solution.length/2;i++){
-            solution[i]=0;
-        }
-
-        int[] new_end_time=new int[NO_OF_PARAMETERS];
-        int[] best_end_time=end_time_set;
+            //初期値の生成
+            int[] move_time_set  = new int[NO_OF_PARAMETERS];
+            int[] end_time_set  = new int[NO_OF_PARAMETERS];
 
 
+            move_time_set=Initialization.move_period_set(infile1, sheet_num1);
+            end_time_set=Initialization.study_end_time(infile1, sheet_num1,start_time);//帰り時間とstudy＿period
+            int deviation =Initialization.move_deviation(infile1, sheet_num1);
+            int average=Initialization.move_average(infile1, sheet_num1);
+            int deviation2 =Initialization.study_deviation(infile1, sheet_num1);//学内いる時間のdeviation
+            solution = Initialization.standard_study_time(infile2, sheet_num2);
+            solution2 = Initialization.standard_work_time(infile2, sheet_num2);
 
-        int[] back_time=new int[defaultGeneLength];
-        int[] best_back_time=new int[defaultGeneLength];
-            int[] best_work_time=new int[defaultGeneLength];///////
+            int[] best_start_time=start_time;//初期値をあげる
+            int[] best_move_time=move_time_set;
+            int[] best_end_time=end_time_set;
+
+            int[] best_work_time=new int[defaultGeneLength];//仕事time
+            int[] best_back_time=new int[defaultGeneLength];//帰り
+            int[] BestPopulation = new int[defaultGeneLength];//行き
+            int[] best_move=new int[defaultGeneLength];//行き＋帰り
+
+            int[] new_start_time  = new int[NO_OF_PARAMETERS];
+            int[] new_move_time=new int[NO_OF_PARAMETERS];
+            int[] new_end_time=new int[NO_OF_PARAMETERS];
+
+
             int[] new_work_time=new int[defaultGeneLength];///////
+            int[] back_time=new int[defaultGeneLength];
+            int[] Population = new int[defaultGeneLength];
+            int[] move=new int[defaultGeneLength];//行き＋帰り
 
-        for(int i=0;i<times;i++) {
-            best_back_time=Initialization.generateEndPopulation(best_end_time,best_move_time);
-            //System.out.println("deviation2 "+deviation2);
+            //for(int i=0;i<times&&fitness>2.5;i++) {
+           for(int i=0;i<times;i++) {
+                BestPopulation = Initialization.generateStartPopulation(best_move_time, best_start_time);
+                best_work_time=Initialization.generateworkPopulation(best_start_time,best_end_time);/////
+                best_back_time=Initialization.generateEndPopulation(best_end_time,best_move_time);
 
-            new_end_time = revolution.revolution_Individual2(best_end_time);
-/////////////////////////
-            best_work_time=Initialization.generateworkPopulation(best_start_time,best_end_time);
-            ///for(int i=0;i<best_end_time.length;i++) {
-              //  best_end_time[i]-best_start_time[i];
-            //}
-// /////////////////
+                new_start_time = revolution.revolution_Individual3(best_start_time);
+                new_move_time = revolution.revolution_Individual(best_move_time,deviation);
+                new_end_time = revolution.revolution_Individual2(best_end_time);
 
-            back_time = Initialization.generateEndPopulation(new_end_time, best_move_time);
-            new_work_time=Initialization.generateworkPopulation(best_start_time,new_end_time);
+                Population = Initialization.generateStartPopulation(new_move_time, new_start_time);
+                new_work_time=Initialization.generateworkPopulation(new_start_time,new_end_time);
+                back_time = Initialization.generateEndPopulation(new_end_time, new_move_time);
 
+                for(int j=0;j<defaultGeneLength;j++){
+                    best_move[j]=best_back_time[j]+BestPopulation[j];
+                    move[j]=back_time[j]+Population[j];
+                }
+                best_move = compare2(best_move, move,best_work_time,new_work_time,T);//////////////////変える
 
-            //best_back_time = compare(best_back_time, back_time, T);
-            best_back_time = compare2(BestPopulation, Population,best_work_time,new_work_time, T);/////////
-            if( best_back_time==back_time){
-                best_end_time=new_end_time;
+                if( best_move==move){
+                    best_move_time=new_move_time;
+                    best_start_time=new_start_time;
+                    best_end_time=new_end_time;
+                    //T=T*0.8;
+                }
+                fitness = getFitness(best_move)+getFitness2(best_work_time);
+                System.out.println(" fitness : " + i + "is" + fitness);
             }
-            fitness = getFitness(best_back_time);
-           // System.out.println(" fitness : " + i + "is" + fitness);
 
-        }
-
-        print_end_percentage(best_end_time,out2);
+            print_percentage(best_move_time,out, best_start_time);
+            print_best_unit(best_move_time,out4,best_start_time);
+            print_end_percentage(best_end_time,out2);
             print_best_endunit(best_end_time,out5);
 
+            int[] arrive_time=new int[NO_OF_PARAMETERS];
+            for(int i=0;i<arrive_time.length;i++){
+                arrive_time[i]=best_end_time[i]+best_move_time[i];
 
-        int[] arrive_time=new int[NO_OF_PARAMETERS];
-        for(int i=0;i<arrive_time.length;i++){
-            arrive_time[i]=best_end_time[i]+best_move_time[i];
+            }
+            print_end_percentage(arrive_time,out3);
+            print_best_endunit(arrive_time,out6);
 
-        }
-        print_end_percentage(arrive_time,out3);
-            print_best_endunit(best_end_time,out6);
 
-       /* for(int i=0;i<best_back_time.length;i++){
-            System.out.println(best_back_time[i]);
-
-        }*/
 
     }
 

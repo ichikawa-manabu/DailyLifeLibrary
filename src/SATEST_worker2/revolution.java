@@ -1,4 +1,4 @@
-package SATEST_worker;
+package SATEST_worker2;
 
 
 import java.util.Random;
@@ -43,12 +43,12 @@ public class revolution {
     }
 
     public static int[] revolution_Individual2(int[] original) {
-        int newIndividual[]= new int[NO_OF_PARAMETERS];//start時刻revolution
+        int newIndividual[]= new int[NO_OF_PARAMETERS];//前後30分以内の任意値revolution　任意値はGaussian分布に従う　
 
         for(int i=0;i<original.length;i++) {
             int value = 0;
             Random random = new Random();
-            int var=(int)Math.round(random.nextGaussian()*2);
+            int var=(int)Math.round(random.nextGaussian())*2;
             //  System.out.println("var"+i+"is"+var);
 
             //if (Math.random() <= 0.5) {
@@ -85,5 +85,6 @@ public class revolution {
 
         return newIndividual;
     }
+
 
     }

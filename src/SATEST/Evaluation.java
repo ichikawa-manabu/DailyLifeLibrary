@@ -13,7 +13,7 @@ public class Evaluation {
     //睡眠時間
     public static int Sleep_period ;
     //回す回数
-    public static int times=300 ;
+    public static int times=100 ;
 
     //答え
     static  int[] solution = new int[defaultGeneLength];
