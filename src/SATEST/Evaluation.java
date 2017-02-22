@@ -12,8 +12,14 @@ public class Evaluation {
     public static final int defaultGeneLength = 96;//24時間
     //睡眠時間
     public static int Sleep_period ;
+
+    ///////////////////////////////////////////////////////////////////////////////
+    //睡眠時間を固定値から平均と標準偏差の値により変わる
+    public static int[] sleep_period ;
+    ///////////////////////////////////////////////////////////////////////////////
+
     //回す回数
-    public static int times=100 ;
+    public static int times=1000 ;
 
     //答え
     static  int[] solution = new int[defaultGeneLength];
@@ -23,7 +29,7 @@ public class Evaluation {
 
     //個体を評価する
     static double getFitness(int unit[]) throws IOException {
-        int[] population= Initialization.Population(unit,Sleep_period);
+        int[] population= Initialization.Population2(unit,sleep_period);
         double evaluationValue = 0.0;
         for(int i=0;i<defaultGeneLength;i++){
             evaluationValue+=Math.pow((((double)(solution[i]-population[i]))/NO_OF_PARAMETERS),2);
@@ -117,13 +123,17 @@ public class Evaluation {
         String Name = Initialization.name(infile1, sheet_num1);//何タイプの人の結果を記録した　例えば：成人男性、２０代女性どか
         System.out.println("Name" + Name);
 
-
-        Sleep_period = Initialization.sleep_period(infile1, sheet_num1);
+            ///////////////////////////////////////////////////////////////////////////////
+            //睡眠時間を固定値から平均と標準偏差の値により変わる
+        sleep_period = Initialization.sleep_period_set(infile1, sheet_num1);
+            for(int i=0;i<sleep_period.length;i++) {
+                System.out.println("Sleep_period" + sleep_period[i]);
+            }
+            ///////////////////////////////////////////////////////////////////////////////
+            Sleep_period=Initialization.sleep_period(infile1, sheet_num1);
         solution = Initialization.standard_sleep_time(infile2, sheet_num2);
         //System.out.println("Sleep_period"+Sleep_period);
-        //for(int i=0;i<solution.length;i++) {
-          //  System.out.println("solution" + i+ ":  "+ solution[i]);
-        //}
+
 
 
         initial_seed=Individual.generateIndividual();
@@ -142,7 +152,10 @@ public class Evaluation {
 
             print_best_unit(best_seed,outfile1);
             print_percentage(best_seed,outfile2);
-
+            int[] best_result= Initialization.Population2(best_seed,sleep_period);
+            for(int i = 0; i<best_result.length; ++i) {
+            System.out.println((double)best_result[i]/NO_OF_PARAMETERS*100);
+            }
 
     }
 

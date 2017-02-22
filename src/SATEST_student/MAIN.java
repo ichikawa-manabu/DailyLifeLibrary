@@ -12,7 +12,7 @@ public class MAIN {
 
 
         File dir = new File("/Users/jiao/Desktop/国民生活時間調査");
-        File outDir = new File(dir.getPath() + "/out_sa_study_time");
+        File outDir = new File(dir.getPath() + "/out_sa_study_time_new");
         if(!outDir.exists()) {
             outDir.mkdir();
         }

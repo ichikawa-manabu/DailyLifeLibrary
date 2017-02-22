@@ -221,7 +221,7 @@ public class Initialization {
             Cell cell_a = row.getCell(0);        //i行第1列
             cellValue = cell_a.getStringCellValue().trim();
             if(cellValue.equals("【全国】")){
-                Cell cell_b = row.getCell(2);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
+                Cell cell_b = row.getCell(2);        //平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
                 // cellValue = cell_b.getStringCellValue().trim();
                 name = cell_b.getStringCellValue();//dateの形
                 // System.out.println( "name"+cellValue2);
@@ -317,9 +317,10 @@ public class Initialization {
     }
 
     public static int[] study_end_time(File file, int sheet_number, int start_time) throws IOException {
-        int[] study_end_time_set = study_period_set(file, sheet_number);
+        int[] study_period_set = study_period_set(file, sheet_number);
+        int[] study_end_time_set= new int[NO_OF_PARAMETERS];
         for(int i=0; i<NO_OF_PARAMETERS;i++){
-            study_end_time_set[i]=(study_end_time_set[i]+start_time)%defaultGeneLength;
+            study_end_time_set[i]=(study_period_set[i]+start_time)%defaultGeneLength;
         }
         return study_end_time_set;
     }

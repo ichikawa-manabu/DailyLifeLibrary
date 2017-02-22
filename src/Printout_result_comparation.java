@@ -10,11 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by manabu on 2017/01/12.
+ * Created by jiao on 2017/02/22.
+ * 睡眠の計算結果は元の統計に対して、どれくらいの違いがあるか
  */
-public class Test {
+public class Printout_result_comparation {
     static  int NO_OF_PARAMETERS =100000;
-    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
+    public static int defaultGeneLength = 96;//24時間
+
+    // 入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
     // 返し値:国民生活時間調査から抽出した睡眠期間
     public static int sleep_period(File file, int sheet_number) throws IOException {
@@ -40,7 +43,7 @@ public class Test {
                 // cellValue = cell_b.getStringCellValue().trim();
                 double cellValue2 = cell_b.getNumericCellValue();//dateの形
                 time=(int)(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15));
-                System.out.println( "average_sleep_time:"+ time+"*15min;");
+                //System.out.println( "average_sleep_time:"+ time+"*15min;");
                 break;
             }
         }
@@ -67,8 +70,6 @@ public class Test {
                 int lTime = h*4+m/15;
                 genes[i]=lTime;
 
-               // double t=Double.parseDouble(pair[0]);
-                //genes[i]=(int)(Math.floor(t*24)*4+Math.round((t*24-Math.floor(t*24))*60/15));
                 System.out.println(genes[i] );
                 i++;
             }
@@ -81,12 +82,52 @@ public class Test {
         }
         return genes;
     }
+    // 最初個体を作る
+    public static byte[] generateIndividual(int start_time,int sleep_time) {
+        //個体が持つ行列
+        //個体が持つ睡眠時間 sleep_time
+        //例：７時間15分=29
+        byte[] genes = new byte[defaultGeneLength];
 
+        start_time=(start_time+defaultGeneLength-1)%defaultGeneLength;//行列は0から始まるので、係数の調整が必要
+        int i=0;
+        while(i< sleep_time){
+            genes[start_time] = 1;
+            start_time=(start_time+1)%defaultGeneLength;
+            i++;
+        }
+        return genes;
+    }
+
+    //全ての個体が持つ行列の足し算、GAの種を作る
+    public static int[] Population(int[] unit,int sleep_time) {
+        int[] Population = new int[defaultGeneLength];
+        for(int i=0;i<unit.length;i++){
+            byte[] genes = new byte[defaultGeneLength];
+            int start_time= unit[i];
+            genes=generateIndividual(unit[i],sleep_time);
+            for(int j=0;j<genes.length;j++) {
+                int t=(int)genes[j];
+                //System.out.println(t);
+                Population[j] = (int)genes[j] + Population[j];
+                genes[j]=0;
+            }
+
+        }
+        return Population;
+    }
     public static void main(String args[]) throws IOException {
-        File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/out_sa/成人全体sleep_start_time.csv");
+        File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/out_sa/成人全体sleep_start_time.csv");//計算結果
+        //File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/out_ga/成人全体sleep_start_time.csv");//計算結果
+
         File  period = new File("/Users/jiao/Desktop/国民生活時間調査/②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls");
-        System.out.println(sleep_period(period,1));//成人全体を指定する
-        file_record(perform_time);
-        System.out.println("Test");
+        int sleep_time=sleep_period(period,1);//成人全体を指定する
+        int[] genes = new int[NO_OF_PARAMETERS];
+        genes=file_record(perform_time);
+        int[] result = new int[defaultGeneLength];
+        result=Population(genes,sleep_time);
+        for(int i=0;i<defaultGeneLength;i++) {
+            System.out.println((double)result[i]/NO_OF_PARAMETERS*100);
+        }
     }
 }
