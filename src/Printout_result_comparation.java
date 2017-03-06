@@ -117,7 +117,7 @@ public class Printout_result_comparation {
         return Population;
     }
     public static void main(String args[]) throws IOException {
-        File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/out_sa/成人全体sleep_start_time.csv");//計算結果
+        File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/成人全体睡眠時間の結果/成人全体sleep_start_time_percentage.csv");//計算結果
         //File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/out_ga/成人全体sleep_start_time.csv");//計算結果
 
         File  period = new File("/Users/jiao/Desktop/国民生活時間調査/②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls");
