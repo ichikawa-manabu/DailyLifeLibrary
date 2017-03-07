@@ -1,8 +1,6 @@
 package SATEST;
 
 
-import java.io.IOException;
-
 /**
  * Created by jiao on 2017/01/18.
  * GAの個体を作る
@@ -43,7 +41,8 @@ public class Individual {
     //22:00から4:00まで、寝る人が多いため、その間の数値を初期値として設定する
     public static int[] generateIndividual() {
         int[] genes = new int[NO_OF_PARAMETERS];
-        int[] possible_time={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,89,90,91,92,93,94,95}; //可能な時間22:00から4：00
+        //int[] possible_time={0,1,2,3,4,5,6,7,8,89,90,91,92,93,94,95}; //可能な時間22:00から4：00
+        int[] possible_time={92,93}; //可能な時間22:00から4：00
         int b;
         for (int i = 0; i < NO_OF_PARAMETERS; i++) {
             b=(int)(Math.random()*possible_time.length);

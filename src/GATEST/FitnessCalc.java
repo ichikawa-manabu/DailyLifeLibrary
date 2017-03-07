@@ -9,13 +9,17 @@ public class FitnessCalc {
     //個体総数
     public static final int POPULATION_SIZE = 50;
     //遺伝子の長さ 今回は10000人と想定する
-    static  int NO_OF_PARAMETERS =100000;
+    static  int NO_OF_PARAMETERS =10000;
     //個体から生成された個体の長さ
     public static final int defaultGeneLength = 96;//24時間
     //睡眠時間
-    public static int Sleep_period ;
-    //回す回数
-    public static int times=100 ;
+    //public static int Sleep_period ;
+    ///////////////////////////////////////////////////////////////////////////////
+    //睡眠時間を固定値から平均と標準偏差の値により変わる
+    public static int[] sleep_period ;
+    ///////////////////////////////////////////////////////////////////////////////
+    // 回す回数
+    public static int times=10 ;
 
     static  int[] solution = new int[NO_OF_PARAMETERS];
 
@@ -32,7 +36,7 @@ public class FitnessCalc {
             unit[i]=individual.getGene(i);
         }
         //int Sleep_period= Initialization.sleep_period(infile1,sheet_num1);
-        int[] population= Initialization.Population(unit,Sleep_period);
+        int[] population= Initialization.Population2(unit,sleep_period);
         double evaluationValue = 0.0;
         for(int i=0;i<defaultGeneLength;i++){
             evaluationValue+=Math.pow((((double)(solution[i]-population[i]))/NO_OF_PARAMETERS),2);
@@ -115,7 +119,7 @@ public class FitnessCalc {
             }
             for(int j=0;j<defaultGeneLength;j++){
                 output.write("\n"+change((int)Math.round(j))+","+(double)recorder[j]/NO_OF_PARAMETERS);//四捨五入
-              //  System.out.println("percentage"+change((int)Math.round(j))+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
+                //System.out.println("percentage"+change((int)Math.round(j))+" is "+(double)recorder[j]/NO_OF_PARAMETERS);
             }
             output.close();
         }catch (IOException e) {
@@ -133,7 +137,8 @@ public class FitnessCalc {
 
     public static void ga_calculation(File infile1, int sheet_num1, File infile2, int sheet_num2, File outfile) throws IOException {
 
-        Sleep_period= Initialization.sleep_period(infile1,sheet_num1);
+       // Sleep_period= Initialization.sleep_period(infile1,sheet_num1);
+        sleep_period= Initialization.sleep_period_set(infile1,sheet_num1);
         solution=Initialization.standard_sleep_time(infile2, sheet_num2);
 
         // 初期化
@@ -152,6 +157,19 @@ public class FitnessCalc {
        // System.out.println("Best individual");
         //print_best_unit(FitnessCalc.getBestIndividual(myPop),outfile);
         print_percentage(FitnessCalc.getBestIndividual(myPop),outfile);
+
+        System.out.println(getBestIndividual(myPop).size());
+       int[] unit = new int[NO_OF_PARAMETERS];
+        for (int i = 0; i < NO_OF_PARAMETERS ; i++) {
+            unit[i]=getBestIndividual(myPop).getGene(i);
+            System.out.println(i+" is "+unit[i]);
+        }
+
+        int[] result= Initialization.Population2(unit,sleep_period);
+        for(int i=0;i<defaultGeneLength;i++){
+            System.out.println(result[i]);
+        }
+
 
     }
 

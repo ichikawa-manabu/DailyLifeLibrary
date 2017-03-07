@@ -14,7 +14,7 @@ import java.util.Date;
  * 睡眠の計算結果は元の統計に対して、どれくらいの違いがあるか
  */
 public class Printout_result_comparation {
-    static  int NO_OF_PARAMETERS =100000;
+    static  int NO_OF_PARAMETERS =10000;
     public static int defaultGeneLength = 96;//24時間
 
     // 入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
@@ -117,8 +117,8 @@ public class Printout_result_comparation {
         return Population;
     }
     public static void main(String args[]) throws IOException {
-        File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/成人全体睡眠時間の結果/成人全体sleep_start_time_percentage.csv");//計算結果
-        //File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/out_ga/成人全体sleep_start_time.csv");//計算結果
+        //File  perform_time = new File("/Users/jiao/Desktop/国民生活時間調査/成人全体睡眠時間の結果/成人全体sleep_start_time_percentage.csv");//計算結果
+        File  perform_time = new File("/Users/jiao/Dropbox/DailyLifeLibrary/data/国民生活時間調査/out_ga_20170306/成人全体sleep_start_time_percentage.csv");//計算結果
 
         File  period = new File("/Users/jiao/Desktop/国民生活時間調査/②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls");
         int sleep_time=sleep_period(period,1);//成人全体を指定する

@@ -1,6 +1,4 @@
-package SATEST_student;
-
-
+package SA_sleep;
 
 import java.io.File;
 
@@ -10,11 +8,10 @@ import java.io.File;
 public class MAIN {
     public static void main(String args[]) throws Exception {
 
-
-       //国民生活時間調査のフォルダー
+//国民生活時間調査データのフォルダー
         File dir = new File("/Users/jiao/Desktop/国民生活時間調査");
         //出力フォルダー
-        File outDir = new File(dir.getPath() + "/out_sa_study_time_new");
+        File outDir = new File(dir.getPath() + "/成人全体睡眠時間の結果");
         if(!outDir.exists()) {
             outDir.mkdir();
         }
@@ -27,9 +24,10 @@ public class MAIN {
 
 
         //sheet_num1とsheet_num２可能な組み合わせを設定する　ファイルの順番はあんまりルールがないので、実際使う時、要確認
-        //小学生中学生高校生
-        int[]sheet_num1={57,58,59};
-        int[]sheet_num2={108,111,114};
+        int[]sheet_num1={4,5,6,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,57,58,59,60,61,62,63,64,65};
+        int[]sheet_num2={1,4,7,10,13,16,19,22,25,28,31,34,37,40,43,46,49,52,54,57,60,63,66,69,72,75,78,81,84,87,90,93,96,99,102,105,108,111,114,117,120,123,126,129,132};
+        //int[]sheet_num1={4};//成人全体
+        //int[]sheet_num2={1};//成人全体
 
         for(int i=0; i<sheet_num1.length&&i<sheet_num2.length;i++){
 

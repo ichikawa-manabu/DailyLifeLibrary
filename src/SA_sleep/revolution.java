@@ -1,4 +1,4 @@
-package SATEST;
+package SA_sleep;
 
 
 import java.util.Random;
@@ -8,14 +8,14 @@ import java.util.Random;
  */
 public class revolution {
 
-    //遺伝子の長さ 今回は10000人と想定する
+    //10万人を想定する
     static  int NO_OF_PARAMETERS =100000;
-    //個体の長さ
+    //15分刻みで1日の長さ
     public static int defaultGeneLength = 96;//24時間
 
+    //睡眠開始時刻の探索範囲(今の時刻の前後1時間（一様分布）)
     public static int[] revolution_Individual(int[] original) {
         int newIndividual[]= new int[NO_OF_PARAMETERS];
-
         for(int i=0;i<original.length;i++) {
             int value = 0;
             if (Math.random() <= 0.5) {
@@ -30,6 +30,7 @@ public class revolution {
       return newIndividual;
     }
 
+    //睡眠時間の探索範囲(今の睡眠時間の前後15min（Gaussian 分布）)
     public static int[] revolution_period(int[] original) {
         int newIndividual[]= new int[NO_OF_PARAMETERS];
 

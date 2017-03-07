@@ -16,13 +16,13 @@ import java.util.Random;
  * Created by jiao on 2017/01/18.
  */
 public class Initialization {
-    //個体の長さ
+    //15分刻みで1日の長さ
     public static int defaultGeneLength = 96;//24時間
-    //扱うパラメータの数 今回は10000人と想定する
+    //10万人を想定する
     public static final int NO_OF_PARAMETERS =100000;
 
 
-
+//人々の通学時間
     public static int move_period(int average, int deviation) throws IOException {
 
                 int time;
@@ -104,7 +104,7 @@ public class Initialization {
         return deviation;
     }
 
-    //移動時間のset
+    //通学時間のset
 
     //
 
@@ -119,7 +119,7 @@ public class Initialization {
     }
 
 
-    // 最初個体を作る
+    // 通学開始時刻、通学時間から最初の個体を作る
     public static byte[] generateStartseed(int start_time,int move_time) {
         //個体が持つ行列
         //個体が持つ移動時間move_time
@@ -142,7 +142,7 @@ public class Initialization {
     }
 
 
-    //全ての個体が持つ行列の足し算、種を作る
+    //通学開始時刻と通学時間から、時刻別の通学割合計算できる
 
     public static int[] generateStartPopulation(int[] move_time_set,int start_time) {
         byte[] genes = new byte[defaultGeneLength];
@@ -163,7 +163,7 @@ public class Initialization {
 
     //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
-    // 返し値:国民生活時間調査から抽出した各タイプの人の時間ごと寝ている確率　(15分単位)　　単位を統一するため、確率*NO_OF_PARAMETERS
+    // 返し値:国民生活時間調査から抽出した各タイプの時刻別通学割合　(15分単位)　　単位を統一するため、確率*NO_OF_PARAMETERS
     public static int[] standard_study_time(File file, int sheet_number) throws IOException {
 
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
@@ -236,7 +236,7 @@ public class Initialization {
 
     //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
-    // 返し値:学校にいる時間
+    // 返し値:学内活動時間の平均
     public static int study_average(File file, int sheet_number) throws IOException {
 
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
@@ -273,7 +273,7 @@ public class Initialization {
 
     //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
-    // 返し値:学内にいる時間の標準偏差
+    // 返し値:学内活動時間の標準偏差
     public static int study_deviation(File file, int sheet_number) throws IOException {
 
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
@@ -304,6 +304,7 @@ public class Initialization {
         return deviation;
     }
 
+//学生たちの学内活動時間の行列
 
     public static int[] study_period_set(File file, int sheet_number) throws IOException {
         int[] study_period_set = new int[NO_OF_PARAMETERS];
@@ -316,6 +317,7 @@ public class Initialization {
         return study_period_set;
     }
 
+    //学生たちの学内活動終了後、帰宅時間の行列
     public static int[] study_end_time(File file, int sheet_number, int start_time) throws IOException {
         int[] study_period_set = study_period_set(file, sheet_number);
         int[] study_end_time_set= new int[NO_OF_PARAMETERS];
@@ -327,7 +329,7 @@ public class Initialization {
 
     ///////////////////////////
 
-    // end個体を作る
+    // 帰宅時間と通学時間から、学生一人の通学スケジュール(帰り)を作る
     public static byte[] generateEndseed(int end_time,int move_time) {
         //個体が持つ行列
         //例：７時間15分=29
@@ -350,7 +352,7 @@ public class Initialization {
     }
 
 
-    //全ての個体が持つ行列の足し算、種を作る
+    // 帰宅時間と通学時間から、全ての学生の時刻別通学(帰り)割合を計算する
 
     public static int[] generateEndPopulation(int[] end_time_set,int[] move_time_set) {
         byte[] genes = new byte[defaultGeneLength];

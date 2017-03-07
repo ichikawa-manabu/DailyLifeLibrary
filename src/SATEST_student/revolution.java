@@ -8,15 +8,15 @@ import java.util.Random;
  */
 public class revolution {
 
-    //遺伝子の長さ 今回は10000人と想定する
+    //10万人を想定する
     static  int NO_OF_PARAMETERS =100000;
-    //個体の長さ
+    //15分刻みで1日の長さ
     public static int defaultGeneLength = 96;//24時間
 
 
 
-//move_timeとstudy＿periodを進化させる
-    //original[NO_OF_PARAMETERS]
+
+//通学時間を新しい値であげる 通学時間〜 N(average,deviation)
     public static int[] revolution_Individual(int[] original,double deviation) {
         int newIndividual[]= new int[NO_OF_PARAMETERS];
 
@@ -41,6 +41,8 @@ public class revolution {
 
       return newIndividual;
     }
+
+    //探索範囲(今の時刻の前後15min（Gaussian分布）)
 
     public static int[] revolution_Individual2(int[] original) {
         int newIndividual[]= new int[NO_OF_PARAMETERS];

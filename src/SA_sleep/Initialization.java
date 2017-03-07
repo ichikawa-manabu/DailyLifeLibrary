@@ -1,4 +1,4 @@
-package GATEST;
+package SA_sleep;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -16,15 +16,16 @@ import java.util.Random;
  * Created by jiao on 2017/01/18.
  */
 public class Initialization {
-    //個体の長さ
+    //15分刻みで1日の長さ
     public static int defaultGeneLength = 96;//24時間
-    //扱うパラメータの数 今回は10000人と想定する
-    public static final int NO_OF_PARAMETERS =10000;
+    //10万人を想定する
+    public static final int NO_OF_PARAMETERS =100000;
 
 
     //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
-    // 返し値:国民生活時間調査から抽出した睡眠期間
+    // 返し値:国民生活時間調査から抽出した平均睡眠期間
+    //全ての人の睡眠時間を同じ数値で設定する時使いまします
     public static int sleep_period(File file, int sheet_number) throws IOException {
 
         POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
@@ -56,7 +57,104 @@ public class Initialization {
         return time;
 
     }
+///////////////////////////////////////////////////////////////////////////////
+    //個々の人の睡眠時間〜N(average,deviation)
+    public static int sleep_period2(int average, int deviation) throws IOException {
 
+        int time;
+        Random random = new Random();
+        time=(int)Math.round(deviation * random.nextGaussian() + average);
+        // System.out.println( average+"  "+ deviation+"MOVE period:"+ time+"*15min;");
+        return time;
+
+    }
+
+
+    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
+    //検索したいsheet_numberを入力
+    // 返し値:平均睡眠時間
+    public static int sleep_average(File file, int sheet_number) throws IOException {
+
+
+        POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
+        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheet_number);
+
+        int time = 0;
+        int rowstart = hssfSheet.getFirstRowNum();
+        int rowEnd = hssfSheet.getLastRowNum();
+        String cellValue = "";
+        for (int i = rowstart; i <= rowEnd; i++) {
+            //for (int i = rowstart; !cellValue.equals("睡　　　　　　 眠"); i++) {//睡眠の行を抽出する
+            HSSFRow row = hssfSheet.getRow(i);//第i行
+            if (null == row) continue;
+            int cellStart = row.getFirstCellNum();
+            int cellEnd = row.getLastCellNum();
+            Cell cell_a = row.getCell(0);        //i行第1列
+            cellValue = cell_a.getStringCellValue().trim();
+            if(cellValue.equals("睡　　　　　　 眠")){
+                Cell cell_b = row.getCell(3);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
+                // cellValue = cell_b.getStringCellValue().trim();
+                double cellValue2 = cell_b.getNumericCellValue();//dateの形
+                time=(int)(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15));
+                System.out.println( "average_sleep_time:"+ time+"*15min;");
+                break;
+            }
+        }
+
+        return time;
+
+    }
+
+    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
+    //検索したいsheet_numberを入力
+    // 返し値:睡眠時間の標準偏差
+    public static int sleep_deviation(File file, int sheet_number) throws IOException {
+
+        POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
+        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheet_number);
+
+        int time = 0;
+        int rowstart = hssfSheet.getFirstRowNum();
+        int rowEnd = hssfSheet.getLastRowNum();
+        String cellValue = "";
+        for (int i = rowstart; i <= rowEnd; i++) {
+            //for (int i = rowstart; !cellValue.equals("睡　　　　　　 眠"); i++) {//睡眠の行を抽出する
+            HSSFRow row = hssfSheet.getRow(i);//第i行
+            if (null == row) continue;
+            int cellStart = row.getFirstCellNum();
+            int cellEnd = row.getLastCellNum();
+            Cell cell_a = row.getCell(0);        //i行第1列
+            cellValue = cell_a.getStringCellValue().trim();
+            if(cellValue.equals("睡　　　　　　 眠")){
+                Cell cell_b = row.getCell(5);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
+                // cellValue = cell_b.getStringCellValue().trim();
+                double cellValue2 = cell_b.getNumericCellValue();//dateの形
+                time=(int)(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15));
+                System.out.println( "deviation_sleep_time:"+ time+"*15min;");
+                break;
+            }
+        }
+
+        return time;
+
+    }
+
+    //個々の人の時間のset
+
+    public static int[] sleep_period_set(File file, int sheet_number) throws IOException {
+        int[] move_period_set = new int[NO_OF_PARAMETERS];
+        int average=sleep_average(file, sheet_number);
+        int deviation=sleep_deviation(file, sheet_number);
+        for(int i=0; i<NO_OF_PARAMETERS;i++){
+            move_period_set[i] = sleep_period2(average, deviation);
+        }
+        return move_period_set;
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////
 
     //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
     //検索したいsheet_numberを入力
@@ -132,7 +230,7 @@ public class Initialization {
 
 
 
-    // 最初個体を作る
+    // 睡眠開始時間と睡眠時間から一人の寝るスケジュールを作る
     public static byte[] generateIndividual(int start_time,int sleep_time) {
         //個体が持つ行列
         //個体が持つ睡眠時間 sleep_time
@@ -148,7 +246,7 @@ public class Initialization {
         return genes;
     }
 
-    //全ての個体が持つ行列の足し算、GAの種を作る
+    //全ての個体の睡眠開始時刻からから時刻別睡眠割合を計算する(全ての人の睡眠時間を平均睡眠時間と設定する時)
     public static int[] Population(int[] unit,int sleep_time) {
         int[] Population = new int[defaultGeneLength];
         for(int i=0;i<unit.length;i++){
@@ -166,115 +264,9 @@ public class Initialization {
         return Population;
     }
 
-    public static int[] creat(int[] unit, File file,int sheet_number) throws IOException {
-        //各人のstart_timeから全ての人の寝る時間の集計
-        int Sleep_period= sleep_period(file,sheet_number);
-        int[] Population=Population(unit, Sleep_period);
-        return Population;
 
-    }
-///////////////////////////////////////////////////////////////////////////////
-    //睡眠時間を固定値から平均と標準偏差の値により変わる
-
-
-    public static int sleep_period2(int average, int deviation) throws IOException {
-
-        int time;
-        Random random = new Random();
-        time=(int)Math.round(deviation * random.nextGaussian() + average);
-        // System.out.println( average+"  "+ deviation+"MOVE period:"+ time+"*15min;");
-        return time;
-
-    }
-
-
-    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
-    //検索したいsheet_numberを入力
-    // 返し値:平均通学時間
-    public static int sleep_average(File file, int sheet_number) throws IOException {
-
-
-        POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
-        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheet_number);
-
-        int time = 0;
-        int rowstart = hssfSheet.getFirstRowNum();
-        int rowEnd = hssfSheet.getLastRowNum();
-        String cellValue = "";
-        for (int i = rowstart; i <= rowEnd; i++) {
-            //for (int i = rowstart; !cellValue.equals("睡　　　　　　 眠"); i++) {//睡眠の行を抽出する
-            HSSFRow row = hssfSheet.getRow(i);//第i行
-            if (null == row) continue;
-            int cellStart = row.getFirstCellNum();
-            int cellEnd = row.getLastCellNum();
-            Cell cell_a = row.getCell(0);        //i行第1列
-            cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("睡　　　　　　 眠")){
-                Cell cell_b = row.getCell(3);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
-                // cellValue = cell_b.getStringCellValue().trim();
-                double cellValue2 = cell_b.getNumericCellValue();//dateの形
-                time=(int)(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15));
-                System.out.println( "average_sleep_time:"+ time+"*15min;");
-                break;
-            }
-        }
-
-        return time;
-
-    }
-
-    //入力ファイル：②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls;
-    //検索したいsheet_numberを入力
-    // 返し値:通学時間の標準偏差
-    public static int sleep_deviation(File file, int sheet_number) throws IOException {
-
-        POIFSFileSystem poifsFileSystem = new POIFSFileSystem(new FileInputStream(file));
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(poifsFileSystem);
-        HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(sheet_number);
-
-        int time = 0;
-        int rowstart = hssfSheet.getFirstRowNum();
-        int rowEnd = hssfSheet.getLastRowNum();
-        String cellValue = "";
-        for (int i = rowstart; i <= rowEnd; i++) {
-            //for (int i = rowstart; !cellValue.equals("睡　　　　　　 眠"); i++) {//睡眠の行を抽出する
-            HSSFRow row = hssfSheet.getRow(i);//第i行
-            if (null == row) continue;
-            int cellStart = row.getFirstCellNum();
-            int cellEnd = row.getLastCellNum();
-            Cell cell_a = row.getCell(0);        //i行第1列
-            cellValue = cell_a.getStringCellValue().trim();
-            if(cellValue.equals("睡　　　　　　 眠")){
-                Cell cell_b = row.getCell(5);        //睡眠平均時間を取る　平日のみを抽出する　土曜日なら Cell cell_b = row.getCell(8);日曜日なら Cell cell_b = row.getCell(13);
-                // cellValue = cell_b.getStringCellValue().trim();
-                double cellValue2 = cell_b.getNumericCellValue();//dateの形
-                time=(int)(Math.floor(cellValue2*24)*4+Math.round((cellValue2*24-Math.floor(cellValue2*24))*60/15));
-                System.out.println( "deviation_sleep_time:"+ time+"*15min;");
-                break;
-            }
-        }
-
-        return time;
-
-    }
-
-    //移動時間のset
-
-    //
-
-    public static int[] sleep_period_set(File file, int sheet_number) throws IOException {
-        int[] sleep_period_set = new int[NO_OF_PARAMETERS];
-        int average=sleep_average(file, sheet_number);
-        int deviation=sleep_deviation(file, sheet_number);
-        for(int i=0; i<NO_OF_PARAMETERS;i++){
-            sleep_period_set[i] = sleep_period2(average, deviation);
-        }
-        return sleep_period_set;
-    }
-
-
-    //全ての個体が持つ行列の足し算、GAの種を作る
+    ///////////////////////////////////////////////////////////////////////////////
+    //全ての個体の睡眠開始時刻からから時刻別睡眠割合を計算する(個々の人の睡眠時間〜N(average,deviation))
     public static int[] Population2(int[] unit,int[] sleep_time) {
         int[] Population = new int[defaultGeneLength];
         for(int i=0;i<unit.length;i++){
@@ -292,6 +284,14 @@ public class Initialization {
         return Population;
     }
     ///////////////////////////////////////////////////////////////////////////////
+
+    public static int[] creat(int[] unit, File file,int sheet_number) throws IOException {
+        //時刻別睡眠開始時刻から時刻別睡眠割合の集計
+        int Sleep_period= sleep_period(file,sheet_number);
+        int[] Population=Population(unit, Sleep_period);
+        return Population;
+
+    }
 
     ///////////////////////////
 

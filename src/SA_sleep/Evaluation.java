@@ -1,4 +1,4 @@
-package SATEST;
+package SA_sleep;
 
 import java.io.*;
 
@@ -6,28 +6,30 @@ import java.io.*;
  * Created by jiao.xue on 2017/01/26.
  */
 public class Evaluation {
-    //遺伝子の長さ 今回は100000人と想定する
+    //10万人を想定する
     static  int NO_OF_PARAMETERS =100000;
-    //個体から生成された個体の長さ
+    //15分刻みで1日の長さ
     public static final int defaultGeneLength = 96;//24時間
-    //睡眠時間
+    //平均睡眠時間
     public static int Sleep_period ;
 
-    ///////////////////////////////////////////////////////////////////////////////
-    //睡眠時間を固定値から平均と標準偏差の値により変わる
+
+    //10万人個々の人の睡眠時間の行列；　一人一人の睡眠時間〜N(平均睡眠時間,睡眠時間の標準偏差)
     public static int[] sleep_period ;
-    ///////////////////////////////////////////////////////////////////////////////
+
 
     //回す回数
     public static int times=5000 ;
 
-    //答え
+    //比較対象(時刻別睡眠行為の割合)
     static  int[] solution = new int[defaultGeneLength];
 
-    //初期値
+    //睡眠開始時刻の割合
     static  int[] initial_seed = new int[NO_OF_PARAMETERS];
 
-    //個体を評価する
+    //評価関数
+    //unit:個々の人の睡眠開始時刻の行列
+    //sleep_period:個々の人の睡眠時間
     static double getFitness(int unit[], int sleep_period[]) throws IOException {
         int[] population= Initialization.Population2(unit,sleep_period);
         double evaluationValue = 0.0;
@@ -40,13 +42,15 @@ public class Evaluation {
 
     }
 
-    //二つの個体を比較すする
+    //二つの個体（個々の人の睡眠開始時刻）を比較する
+    //返し値：評価値低い個体
     public static int[] compare(int[] individual1,int[] individual2,int[] sleep_period1,int[] sleep_period2) throws IOException {
         double comparation =getFitness(individual2,sleep_period2)-getFitness(individual1,sleep_period1);
         if(comparation<0) {
             return individual2;
         }
         else {
+            //Tを平均睡眠時間と設定する
            if(Math.random()> Math.exp(-comparation / Sleep_period)){
                 return individual2;
             }
@@ -56,7 +60,7 @@ public class Evaluation {
     }
 
 
-    //結果を書き出す
+    //結果(個体)を書き出す
     public static void print_best_unit(int [] best_seed, File outfile)  {
 
         try{
@@ -79,7 +83,7 @@ public class Evaluation {
         }
     }
 
-    //結果を書き出す
+    //結果(割合)を書き出す
     public static void print_percentage(int [] best_seed, File outfile)  {
 
         try{
@@ -124,20 +128,19 @@ public class Evaluation {
 
 
             ///////////////////////////////////////////////////////////////////////////////
-            //睡眠時間を固定値から平均と標準偏差の値により変わる
+            //各々の人の睡眠時間の計算
         sleep_period = Initialization.sleep_period_set(infile1, sheet_num1);
-          //  for(int i=0;i<sleep_period.length;i++) {
-                //System.out.println("Sleep_period" + sleep_period[i]);
-            //}
+
             int[] best_sleep_period=sleep_period ;
-            ///////////////////////////////////////////////////////////////////////////////
-            Sleep_period=Initialization.sleep_period(infile1, sheet_num1);
+
+            Sleep_period= Initialization.sleep_period(infile1, sheet_num1);//平均睡眠時間
         solution = Initialization.standard_sleep_time(infile2, sheet_num2);
-        //System.out.println("Sleep_period"+Sleep_period);
 
 
 
+         //最初の個体
         initial_seed= Individual.generateIndividual();
+            //評価値
         double fitness=getFitness(initial_seed,best_sleep_period);
         //System.out.println("original fitness : " + fitness);
 
@@ -152,7 +155,7 @@ public class Evaluation {
                best_sleep_period=new_period;
             }
             fitness = getFitness(best_seed,best_sleep_period);
-            //System.out.println(" fitness : " + i +"is" + fitness);
+            System.out.println(" fitness : " + i +"is" + fitness);
         }
             sleep_period=best_sleep_period;
             print_best_unit(best_seed,outfile1);
@@ -168,7 +171,7 @@ public class Evaluation {
     Evaluation(File inDir, File outDir, int sheet_num1, int sheet_num2 ) throws Exception {
         File  perform_time = new File(inDir.getPath() + "/②1日の行為者率・行為者平均時間量・全体平均時間量・標準偏差（国民全体、層別）.xls");
         File performer_percentage = new File(inDir.getPath() + "/④時刻別行為者率（職業別、都市規模別ほか）.xls");
-        String Name=Initialization.name(perform_time,sheet_num1);//何タイプの人の結果を記録した　例えば：成人男性、２０代女性どか
+        String Name= Initialization.name(perform_time,sheet_num1);//何タイプの人の結果を記録した　例えば：成人男性、２０代女性どか
         System.out.println("Name"+Name);
         File  outFile1 = new File(outDir.getPath() + "/"+Name+"sleep_start_time.csv");
         File  outFile2 = new File(outDir.getPath() + "/"+Name+"sleep_start_time_percentage.csv");

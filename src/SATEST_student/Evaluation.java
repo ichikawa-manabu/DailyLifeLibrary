@@ -6,22 +6,22 @@ import java.io.*;
  * Created by jiao on 2017/01/29.
  */
 public class Evaluation {
-    //個体の長さ
+    //10万人をと想定する
     public static int defaultGeneLength = 96;//24時間
-    //扱うパラメータの数 今回は10000人と想定する
+    //15分刻みで1日の長さ
     public static final int NO_OF_PARAMETERS =100000;
 
     //回す回数
     public static int times=1000 ;
 
-    //答え
+    //時刻別学内活動の割合
     static  int[] solution = new int[defaultGeneLength];
 
-    public static int start_time;//小学生授業は８：３０から
+    public static int start_time;//初期値: 小学生授業開始時刻を８：３０と設定する
 
 
 
-    //初期値
+    //初期個体
     static  int[] initial_seed = new int[NO_OF_PARAMETERS];
 
     //個体を評価する
@@ -37,7 +37,7 @@ public class Evaluation {
 
     }
 
-    //二つの個体を比較すする
+    //二つの個体を比較する　評価値小さい方を返す
     public static int[] compare(int[] individual1,int[] individual2,  double T)throws IOException {
         double comparation =getFitness(individual2)-getFitness(individual1);
         if(comparation<0) {
@@ -53,7 +53,7 @@ public class Evaluation {
 
 
 
-    //結果を書き出す
+    //結果を書き出す(10万人の行動時刻)
     public static void print_best_unit(int [] best_seed, File outfile)  {
 
         try{
@@ -76,7 +76,7 @@ public class Evaluation {
         }
     }
 
-    //結果を書き出す
+    //結果を書き出す(10万人時刻別行動を行った割合)
     public static void print_percentage(int [] best_seed, File outfile)  {
 
         try{
